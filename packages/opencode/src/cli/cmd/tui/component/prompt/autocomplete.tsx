@@ -217,18 +217,91 @@ export function Autocomplete(props: {
           description: "compact the session",
           onSelect: () => command.trigger("session.compact"),
         },
+      )
+
+      // Only show share commands if sharing is enabled in config
+      if (sync.data.config.share !== "disabled") {
+        results.push(
+          {
+            display: "/share",
+            disabled: !!s.share?.url,
+            description: "share a session",
+            onSelect: () => command.trigger("session.share"),
+          },
+          {
+            display: "/unshare",
+            disabled: !s.share,
+            description: "unshare a session",
+            onSelect: () => command.trigger("session.unshare"),
+          },
+        )
+      }
+
+      results.push(
         {
-          display: "/share",
-          disabled: !!s.share?.url,
-          description: "share a session",
-          onSelect: () => command.trigger("session.share"),
+          display: "/rename",
+          description: "rename session",
+          onSelect: () => command.trigger("session.rename"),
         },
         {
-          display: "/unshare",
-          disabled: !s.share,
-          description: "unshare a session",
-          onSelect: () => command.trigger("session.unshare"),
+          display: "/copy",
+          description: "copy session transcript to clipboard",
+          onSelect: () => command.trigger("session.copy"),
         },
+        {
+          display: "/export",
+          description: "export session transcript to file",
+          onSelect: () => command.trigger("session.export"),
+        },
+        {
+          display: "/timeline",
+          description: "jump to message",
+          onSelect: () => command.trigger("session.timeline"),
+        },
+      )
+    }
+    if (s) {
+      results.push({
+        display: "/undo",
+        description: "undo the last message",
+        onSelect: () => {
+          command.trigger("session.undo")
+        },
+      })
+
+      results.push(
+        {
+          display: "/rename",
+          description: "rename session",
+          onSelect: () => command.trigger("session.rename"),
+        },
+        {
+          display: "/compact",
+          aliases: ["/summarize"],
+          description: "compact the session",
+          onSelect: () => command.trigger("session.compact"),
+        },
+      )
+
+      // Only show share commands if sharing is enabled in config
+      if (sync.data.config.share !== "disabled") {
+        results.push(
+          {
+            display: "/share",
+            disabled: !!s.share?.url,
+            description: "share a session",
+            onSelect: () => command.trigger("session.share"),
+          },
+          {
+            display: "/unshare",
+            disabled: !s.share,
+            description: "unshare a session",
+            onSelect: () => command.trigger("session.unshare"),
+          },
+        )
+      }
+
+      results.push(
         {
           display: "/rename",
           description: "rename session",

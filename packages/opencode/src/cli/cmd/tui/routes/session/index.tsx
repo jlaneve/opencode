@@ -216,44 +216,48 @@ export function Session() {
         dialog.clear()
       },
     },
-    {
-      title: "Share session",
-      value: "session.share",
-      keybind: "session_share",
-      disabled: !!session()?.share?.url,
-      category: "Session",
-      onSelect: async (dialog) => {
-        await sdk.client.session
-          .share({
-            path: {
-              id: route.sessionID,
+    ...(sync.data.config.share !== "disabled"
+      ? [
+          {
+            title: "Share session",
+            value: "session.share",
+            keybind: "session_share" as const,
+            disabled: !!session()?.share?.url,
+            category: "Session",
+            onSelect: async (dialog: any) => {
+              await sdk.client.session
+                .share({
+                  path: {
+                    id: route.sessionID,
+                  },
+                })
+                .then((res) =>
+                  Clipboard.copy(res.data!.share!.url).catch(() =>
+                    toast.show({ message: "Failed to copy URL to clipboard", variant: "error" }),
+                  ),
+                )
+                .then(() => toast.show({ message: "Share URL copied to clipboard!", variant: "success" }))
+                .catch(() => toast.show({ message: "Failed to share session", variant: "error" }))
+              dialog.clear()
             },
-          })
-          .then((res) =>
-            Clipboard.copy(res.data!.share!.url).catch(() =>
-              toast.show({ message: "Failed to copy URL to clipboard", variant: "error" }),
-            ),
-          )
-          .then(() => toast.show({ message: "Share URL copied to clipboard!", variant: "success" }))
-          .catch(() => toast.show({ message: "Failed to share session", variant: "error" }))
-        dialog.clear()
-      },
-    },
-    {
-      title: "Unshare session",
-      value: "session.unshare",
-      keybind: "session_unshare",
-      disabled: !session()?.share?.url,
-      category: "Session",
-      onSelect: (dialog) => {
-        sdk.client.session.unshare({
-          path: {
-            id: route.sessionID,
           },
-        })
-        dialog.clear()
-      },
-    },
+          {
+            title: "Unshare session",
+            value: "session.unshare",
+            keybind: "session_unshare" as const,
+            disabled: !session()?.share?.url,
+            category: "Session",
+            onSelect: (dialog: any) => {
+              sdk.client.session.unshare({
+                path: {
+                  id: route.sessionID,
+                },
+              })
+              dialog.clear()
+            },
+          },
+        ]
+      : []),
     {
       title: "Undo previous message",
       value: "session.undo",
